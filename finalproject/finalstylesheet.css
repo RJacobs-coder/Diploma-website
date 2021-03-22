@@ -1,0 +1,83 @@
+
+/*Comment */
+
+body{
+
+    background-color: cyan;
+    font-size: 150%;
+}
+
+h1{
+    border-bottom-style: solid;
+    text-align: center;
+    color: purple;
+    font-size: 300%;
+}
+h2{
+    border-bottom-style: solid;
+    text-align: center;
+    color: darkblue;
+    font-size: 300%;
+
+}
+
+h3{
+    border-bottom-style: solid;
+    text-align: center;
+    color: slateblue;
+    font-size: 300%;
+}
+nav{
+    font-size:150%;
+    display: block;
+    color: purple;
+}
+
+ul {
+    list-style-type: none;
+    overflow: hidden;
+  }
+  
+  li {
+    /*float: left;*/
+    color: blue;
+  }
+  
+  li a {
+    font-size: 90%;
+    border-right-style:solid;
+    display: block;
+    color: purple;
+
+  }
+  li a:hover {
+    background-color:whitesmoke;
+  }
+  button{
+    color:white;
+  }
+  form{
+      padding-left: 150px;
+  }
+  input[type=text]{
+      width:90%;
+      background: rgba(0,0,139,0.3);
+  }
+
+    input[type=number]{
+    width:90%;
+    background: rgba(0,0,139,0.3);
+    }
+
+    input[type=submit]{
+    background-color:darkblue;
+    color:cyan;
+    }
+   
+    input::placeholder{
+    color:darkblue;
+    }
+    form a{
+    color: darkblue;
+    }
+  
