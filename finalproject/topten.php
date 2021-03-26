@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <!-- Displays top 10 values based on the 'count' column in the database. -->
+
 <head>
     <title>FinalProject SearchPage</title>
     <meta name="keywords" content="finalproject, diploma, robert, jacobs" />
@@ -12,21 +13,33 @@
 
     <!-- Style for table, not in stylesheet due to the need to color code each page. -->
     <style>
+        h4 {
+            border-bottom-style: solid;
+            text-align: center;
+            color: gray;
+            font-size: 300%;
+
+        }
+
         table,
         tr,
         th,
         td {
             padding-right: 150px;
-            color: black;
-            border: 10px solid gold;
-            background: rgba(255, 255, 0, 0.25);
+            color: gray;
+            border: 10px solid slategray;
+            background: rgba(192, 192, 192, 0.25);
         }
     </style>
+    <!-- Script to allow Graph Be created and introduced to page.-->
+
 </head>
 
 <body>
+
+    <!-- Start of Page Proper.-->
     <div class="jumbotron text-center" style="margin-bottom:0"></div>
-    <h2> Display Top Ten </h2>
+    <h4> Display Top Ten </h4>
     </div>
 
     <div class="row">
@@ -40,13 +53,10 @@
                     <li class="nav-item"><a class="navlink" style="color:darkblue" href="searchpage.html">Search
                             Page</a>
                     </li>
-                    <li class="nav-item"><a class="navlink" style="color: darkblue" href="resultpage.php">Result
-                            Page</a>
-                    </li>
                     <li class="nav-item"><a class="navlink" style="color:slateblue" href="displaypage.php">Display
                             Page</a>
                     </li>
-                    <li class="nav-item"><a class="navlink" style="color:gold" href="topten.php">Display Top 10
+                    <li class="nav-item"><a class="navlink" style="color:gray" href="topten.php">Display Top 10
                             Page</a>
                     </li>
                 </ul>
@@ -54,69 +64,106 @@
 
             </nav>
         </div>
-
-       
-        </div>
+    </div>
     </div>
     <div class="row">
         <div class="row">
             <div class="col-sm-1">
             </div>
-            <div class="col-lg-11">
+            <div class="col-lg-2">
 
-            <!-- Form to display all columns but restricting the values to the top ten highest values on the 'count' column -->
+                <?php
+
+                // Opens connection to database and executes SQL Statement.
+                require('connection.php');
+                $result = $conn->prepare("SELECT * FROM movies ORDER BY count DESC LIMIT 10");
+                $result->execute();
+
+                $arrayCount;
+                // Puts data from SQL into Array to be used for Graph Array (dataPoints).
+                for ($i = 0; $row = $result->fetch(); $i++) {
+
+                    $arrayCount[$i] = $row['count'];
+                }
+                // Inserts Value into Graph.
+                $dataPoints = array(
+                    array("x" => 1, "y" =>  $arrayCount[0]),
+                    array("x" => 2, "y" =>  $arrayCount[1]),
+                    array("x" => 3, "y" =>  $arrayCount[2]),
+                    array("x" => 4, "y" =>  $arrayCount[3]),
+                    array("x" => 5, "y" =>  $arrayCount[4]),
+                    array("x" => 6, "y" =>  $arrayCount[5]),
+                    array("x" => 7, "y" =>  $arrayCount[6]),
+                    array("x" => 8, "y" =>  $arrayCount[7]),
+                    array("x" => 9, "y" =>  $arrayCount[8]),
+                    array("x" => 10, "y" =>  $arrayCount[9])
+                );
+                ?>
+
+                <!-- Allows for graph to appear -->
+                <div id="chartContainer" style="height: 405px; width: 100%;" style="padding-left: 150px;"></div>
+                <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+                <script>
+                    window.onload = function() {
+
+                        var chart = new CanvasJS.Chart("chartContainer", {
+                            animationEnabled: true,
+                            exportEnabled: true,
+                           theme: "dark1", // "light1", "light2", "dark1", "dark2"
+                            title: {
+                                text: "Top Ten Graph."
+                            },
+                            axisY: {
+                                includeZero: true
+                            },
+                            data: [{
+                                type: "pie", //change type to bar, line, area, pie, etc
+                                indexLabel: "{y}", //Shows y value on all Data Points
+                                indexLabelFontColor: "#5A5757",
+                                indexLabelPlacement: "outside",
+                                dataPoints: <?php echo json_encode($dataPoints, JSON_NUMERIC_CHECK); ?>
+                            }]
+                        });
+                        chart.render();
+
+                    }
+                </script>
+            </div>
+            <div class="col-lg-9">
                 <table>
+                    <!-- New smaller form to rest beside Graph to give basic into about 10 ten results. -->
                     <tr style="font-size: 120%;">
+                        <th>Placement</th>
                         <th>ID</th>
                         <th>Title</th>
-                        <th>Studio</th>
-                        <th>Status</th>
-                        <th>Sound</th>
-                        <th>Versions</th>
-                        <th>RecRetPrice</th>
-                        <th>Rating</th>
-                        <th>Year</th>
-                        <th>Genre</th>
-                        <th>Aspect</th>
                         <th>Count</th>
                     </tr>
 
                     <?php
-                    require_once('connection.php');
                     $result = $conn->prepare("SELECT * FROM movies ORDER BY count DESC LIMIT 10");
                     $result->execute();
                     for ($i = 0; $row = $result->fetch(); $i++) {
-                 ?>
-                   <tr style="font-size: 65%;">
-                        <td><?php echo $row['ID'];?></td>
-                        <td><?php echo $row['Title'];?></td>
-                        <td><?php echo $row['Studio'];?></td>
-                        <td><?php echo $row['Status'];?></td>
-                        <td><?php echo $row['Sound'];?></td>
-                        <td><?php echo $row['Versions'];?></td>
-                        <td><?php echo $row['RecRetPrice'];?></td>
-                        <td><?php echo $row['Rating'];?></td>
-                        <td><?php echo $row['Year'];?></td>
-                        <td><?php echo $row['Genre'];?></td>
-                        <td><?php echo $row['Aspect'];?></td>
-                        <td><?php echo $row['count'];?></td>
+                    ?>
+                        <tr style="font-size: 65%;">
+                            <td><?php echo $i + 1; ?></td>
+                            <td><?php echo $row['ID']; ?></td>
+                            <td><?php echo $row['Title']; ?></td>
+                            <td><?php echo $row['count']; ?></td>
 
-                    </tr>
+                        </tr>
                     <?php    }
 
                     // Connection break for security.
-                    $conn = null;
+                        $conn = null;
                     ?>
-                    
-                   
+
+
                 </table>
+
             </div>
-
-
         </div>
 
-   
-    
+     
 
 </body>
 

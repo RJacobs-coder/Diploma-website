@@ -13,6 +13,7 @@ h1{
     color: purple;
     font-size: 300%;
 }
+
 h2{
     border-bottom-style: solid;
     text-align: center;
@@ -27,6 +28,15 @@ h3{
     color: slateblue;
     font-size: 300%;
 }
+
+h4{
+  border-bottom-style: solid;
+  text-align: center;
+  color: gold;
+  font-size: 300%;
+
+}
+
 nav{
     font-size:150%;
     display: block;

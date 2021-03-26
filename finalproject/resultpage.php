@@ -1,9 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 
-
-<!-- Result page after the user has input data into searchpage.html. Will remove this page from navbar on final version -->
-
 <head>
     <title>FinalProject ResultPage</title>
     <meta name="keywords" content="finalproject, diploma, robert, jacobs" />
@@ -32,27 +29,24 @@
     <div class="jumbotron text-center" style="margin-bottom:0"></div>
     <h2> Result Page </h2>
     </div>
-<!-- Nav bar on side of page.-->
+    <!-- Nav bar on side of page.-->
     <div class="row">
         <div class="col-sm-1">
             <nav class="navbar-brand" style="color:black; font-size:larger; border-bottom: solid;" href="#">Nav Bar
             </nav>
             <div>
 
-            <!-- Color coded links to make each page look distinct -->
+                <!-- Color coded links to make each page look distinct -->
                 <ul class="navbar-nav">
                     <li class="nav-item"><a class="navlink" style="color: purple" href="homepage.html">Home Page</a>
                     </li>
                     <li class="nav-item"><a class="navlink" style="color:darkblue" href="searchpage.html">Search
                             Page</a>
                     </li>
-                    <li class="nav-item"><a class="navlink" style="color: darkblue" href="resultpage.php">Result
-                            Page</a>
-                    </li>
                     <li class="nav-item"><a class="navlink" style="color: slateblue" href="displaypage.php">Display
                             Page</a>
                     </li>
-                    <li class="nav-item"><a class="navlink" style="color:gold" href="topten.php">Display Top 10
+                    <li class="nav-item"><a class="navlink" style="color:gray" href="topten.php">Display Top 10
                             Page</a>
                     </li>
                 </ul>
@@ -66,158 +60,187 @@
 
         </div>
     </div>
-    <div class="row">
+    <form action="searchpage.html" method="POST">
+        <input type="submit" name="submit" value="Search Again">
+    </form>
+    </br>
+
+    <?php
+
+    require('connection.php');
+
+    $title = $_POST['title'];
+    $studio = $_POST['studio'];
+    $rating = $_POST['rating'];
+    $year = $_POST['year'];
+    $genre = $_POST['genre'];
+
+    // Array to hold values into a combined string to use in query.
+    $array = array();
+
+    // sql is the query that accepts all the values of the array and concatonates them to be accepting into the database.
+    $sql = "";
+
+    // For loop measures out the max size of the array. Selects specific values to put into array depending on which search parameters were provided by the user.
+    for ($i = 0; $i < 5; $i++) {
+        switch ($i) {
+
+                // The array currantly is set to the default of Zero Indexes.
+                // The switch case will validate the information from "searchpage.php" and format it for SQL.
+                // The values are then pushed into the array one by one.
+            case 0:
+                if ($title === "") { // If nothing is present. Break onto the next step.
+
+                    break;
+                } else {
+                    $temp = "Title='" . $title . "'"; // Temp value formats the information in a way that is compliant with SQL statements.
+                    array_push($array, $temp); // The value is pushed into the array, increasing the number of indexes by one dynamically.
+                    echo "Title at Switch Case -- $title </br>";
+                }
+                break;
+            case 1:
+                if ($studio === "") {
+
+                    break;
+                } else {
+                    $temp = "Studio='" . $studio . "'";
+                    array_push($array, $temp);
+                }
+                break;
+            case 2:
+                if ($rating === "") {
+
+                    break;
+                } else {
+                    $temp = "Rating='" . $rating . "'";
+                    array_push($array, $temp);
+                }
+                break;
+            case 3:
+                if ($year === "") {
+
+                    break;
+                } else {
+                    $temp = "Year='" . $year . "'";
+                    array_push($array, $temp);
+                }
+                break;
+            case 4:
+                if ($genre === "") {
+
+                    break;
+                } else {
+                    $temp = "Genre='" . $genre . "'";
+                    array_push($array, $temp);
+                }
+                break;
+            default:
+                echo "Issue at switch case";
+                break;
+        }
+    }
+
+    // Validates and constructs the SQL Statement to be used in the execute.
+    $size = sizeof($array) - 1; // - 1 because indexing starts at zero.
+
+
+    for ($i = 0; $i < $size + 1; $i++) {
+        if ($i < $size) {
+
+            $sql = $sql . $array[$i] . " AND ";
+            echo "Jeremy request --- $sql";
+        } elseif ($i === $size) {
+
+            $sql = $sql . $array[$i] . " ; ";
+
+            echo "Result from concatonation $sql </br>";
+            print_r($array);
+        } else {
+            echo "</br> Error Occured --  Else Array Size = $i";
+        }
+    }
+    echo "Result after sql string Creation -- Title -> $title";
+    echo "</br> sql string --> $sql";
+    print_r($array);
+
+    // Query is constructed and inserted into database.
+    $query = "SELECT * FROM movies WHERE $sql";
+    $result = $conn->prepare($query);
+
+    echo "</br>This is the query after result has been assigned.-- $query";
+
+    try {
+        $result->execute();
+    } catch (exception $e) {
+
+        echo "Query did not execute. Please try again.";
+    } finally {
+
+        // Connection break for security.
+        $conn = null;
+    }
+
+
+    // Results printed out in form.
+    if ($result->rowcount() <= 0) {
+
+        echo "<p>Search Results not found.</p>";
+
+    } else {
+
+    ?>
         <div class="row">
-            <div class="col-sm-1">
-            </div>
-            <div class="col-lg-11">
+            <div class="row">
+                <div class="col-sm-1">
+                </div>
+                <div class="col-lg-11">
 
-            <!-- Form to display results from table. -->
-                <table>
-                    <tr style="font-size: 120%;">
-                        <th>ID</th>
-                        <th>Title</th>
-                        <th>Studio</th>
-                        <th>Status</th>
-                        <th>Sound</th>
-                        <th>Versions</th>
-                        <th>RecRetPrice</th>
-                        <th>Rating</th>
-                        <th>Year</th>
-                        <th>Genre</th>
-                        <th>Aspect</th>
-                        <th>Aspect</th>
-                    </tr>
-                    <?php
+                    <!-- Form to display results from table. -->
+                    <table>
+                        <tr style="font-size: 120%;">
 
-
-                    require('connection.php');
-
-                    // !!!Work in progress!!!!
-
-                    // values allows user to get values from database for later use.
-                    $title = $_POST['title'];
-                    $studio = $_POST['studio'];
-                    $rating = $_POST['rating'];
-                    $year = $_POST['year'];
-                    $genre = $_POST['genre'];
-
-                    // Array to hold values into a combined string to use in query.
-                    $array = array("", "", "", "", "");
-                    $sql = "";
-
-
-
-                    // For loop measures out the max size of the array. Selects specific values to put into array depending on which search parameters were provided by the user.
-                    for ($i = 0; $i < 5; $i++) {
-                        switch ($i) {
-
-                            // Switch case to keep track of which result was input by the user.
-                            // Each user input (Form from searchpage.html) is checked to see if there is a value present. If not leave the empty.
-                            case 0:
-                                if ($title === "") {
-                                    echo "Null at 1";
-                                    break;
-                                } else {
-                                    // !!!Known bug!!! 
-                                    // After the array is filled I need to create a way remove empty values ,concatonate filled values and create a completed dynamic query.
-                                    $array[$i] = "Title='" . $title . "'";
-                                }
-                                break;
-                            case 1:
-                                if ($studio === "") {
-                                    echo "Null at 2";
-                                    break;
-                                } else {
-                                    $array[$i] = "Studio='" . $studio . "'";
-                                }
-                                break;
-                            case 2:
-                                if ($rating === "") {
-                                    echo "Null at 3";
-                                    break;
-                                } else {
-                                    $array[$i] = "Rating='" . $rating . "'";
-                                }
-                                break;
-                            case 3:
-                                if ($year === "") {
-                                    echo "Null at 4";
-                                    break;
-                                } else {
-                                    $array[$i] = "Year='" . $year . "'";
-                                }
-                                break;
-                            case 4:
-                                if ($genre === "") {
-                                    echo "Null at 5";
-                                    break;
-                                } else {
-                                    $array[$i] = "Genre='" . $genre . "'";
-                                }
-                                break;
-                            default:
-                                echo "Issue at switch case";
-                                break;
-                        }
-                    }
-
-                    $counter = $i;
-                    echo "\nBefore ForEach Sql";
-
-                    // Takes the result of the switch case and creates a SQL query all the values except the last one.
-                    if (sizeof($array) > 0) {
-                        for ($i = 0; $i < $counter - 1; $i++) {
-                            if (strlen($array[$i]) == 0) {
-                                echo "Array at $i = null";
-                            } else {
-                                $sql = $sql . $array[$i] . "AND ";
-                            }
-                        }
-
-                        // The end index of the array is formatted correctly for SQL.
-                        $sql = $sql . $array[$counter - 1] . " ;";
-                    } else {
-                        // ELSE only one value in array. The singular value is parsed into the SQL query.
-                        $sql = $sql . $array[0] . " ;";
-                    }
-
-
-                    // Query is constructed and inserted into database.
-                    $query = "SELECT * FROM movies WHERE $sql";
-                    $result = $conn->prepare($query);
-
-                    $result->execute();
-
-                    // Results printed out in form.
-                    for ($i = 0; $row = $result->fetch(); $i++) {
-                    ?>
-
-
-                        <tr style="font-size: 65%;">
-                            <td><?php echo $row['ID']; ?></td>
-                            <td><?php echo $row['Title']; ?></td>
-                            <td><?php echo $row['Studio']; ?></td>
-                            <td><?php echo $row['Status']; ?></td>
-                            <td><?php echo $row['Sound']; ?></td>
-                            <td><?php echo $row['Versions']; ?></td>
-                            <td><?php echo $row['RecRetPrice']; ?></td>
-                            <td><?php echo $row['Rating']; ?></td>
-                            <td><?php echo $row['Year']; ?></td>
-                            <td><?php echo $row['Genre']; ?></td>
-                            <td><?php echo $row['Aspect']; ?></td>
-                            <td><?php echo $row['count']; ?></td>
+                            <th>ID</th>
+                            <th>Title</th>
+                            <th>Studio</th>
+                            <th>Status</th>
+                            <th>Sound</th>
+                            <th>Versions</th>
+                            <th>RecRetPrice</th>
+                            <th>Rating</th>
+                            <th>Year</th>
+                            <th>Genre</th>
+                            <th>Aspect</th>
+                            <th>Aspect</th>
                         </tr>
+                        <?php
+                        while($row = $result->fetch(PDO::FETCH_ASSOC)){
+                        //for ($i = 0; $row = $result->fetch(); $i++) {
+                        ?>
+                            <tr style="font-size: 65%;">
+                                <td><?php echo $row['ID']; ?></td>
+                                <td><?php echo $row['Title']; ?></td>
+                                <td><?php echo $row['Studio']; ?></td>
+                                <td><?php echo $row['Status']; ?></td>
+                                <td><?php echo $row['Sound']; ?></td>
+                                <td><?php echo $row['Versions']; ?></td>
+                                <td><?php echo $row['RecRetPrice']; ?></td>
+                                <td><?php echo $row['Rating']; ?></td>
+                                <td><?php echo $row['Year']; ?></td>
+                                <td><?php echo $row['Genre']; ?></td>
+                                <td><?php echo $row['Aspect']; ?></td>
+                                <td><?php echo $row['count']; ?></td>
+                            </tr>
                     <?php    }
+                    }
 
                     // Connection break for security.
                     $conn = null;
                     ?>
-                </table>
+                    </table>
+                </div>
+
+
             </div>
-
-
-        </div>
 
 </body>
 

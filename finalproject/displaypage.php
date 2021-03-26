@@ -50,13 +50,10 @@
                     <li class="nav-item"><a class="navlink" style="color:darkblue" href="searchpage.html">Search
                             Page</a>
                     </li>
-                    <li class="nav-item"><a class="navlink" style="color: darkblue" href="resultpage.php">Result
-                            Page</a>
-                    </li>
                     <li class="nav-item"><a class="navlink" style="color: slateblue" href="displaypage.php">Display
                             Page</a>
                     </li>
-                    <li class="nav-item"><a class="navlink" style="color:gold" href="topten.php">Display Top 10
+                    <li class="nav-item"><a class="navlink" style="color:gray" href="topten.php">Display Top 10
                             Page</a>
                     </li>
                 </ul>
